@@ -1,0 +1,22 @@
+syntax = "proto3";
+option java_package = "com.lyh.api.model";
+option java_outer_classname = "TestAppModel";
+option objc_class_prefix = "HLW";
+option java_multiple_files = true;
+package m;
+
+message RpcStatus{
+	//状态码
+	int32 status_code=1;
+	//状态描述
+	string status_reason=2;
+}
+
+message EchoReq{
+	string data=1;
+}
+message EchoResp{
+	string reply=1;
+	//接口接口状态
+	m.RpcStatus rpc_status=2;
+}
