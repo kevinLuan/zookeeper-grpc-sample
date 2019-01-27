@@ -20,8 +20,8 @@
 	<modules>
 		<module>spring-boot-grpc-server</module>
 		<module>spring-boot-grpc-client</module>
-		<module>api</module>
-	</module>
+		<!--<module>api</module>-->
+	</modules>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

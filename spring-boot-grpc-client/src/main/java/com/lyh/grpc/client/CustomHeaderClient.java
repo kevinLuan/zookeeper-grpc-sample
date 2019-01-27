@@ -14,7 +14,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
 /**
- * A simple client that like {@link io.grpc.examples.helloworld.HelloWorldClient}. This client can
+ * A simple client that like {@link com.lyh.rpc.EchoServiceGrpc}. This client can
  * help you create custom headers.
  */
 public class CustomHeaderClient {
@@ -38,7 +38,7 @@ public class CustomHeaderClient {
   }
 
   /**
-   * A simple client method that like {@link io.grpc.examples.helloworld.HelloWorldClient}.
+   * A simple client method that like {@link com.lyh.rpc.EchoServiceGrpc}.
    */
   private void greet(String name) {
     logger.info("Will try to greet " + name + " ...");

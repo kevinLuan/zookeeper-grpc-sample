@@ -1,5 +1,6 @@
 package com.lyh.grpc.client.api;
 
+import io.grpc.LoadBalancerRegistry;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,34 +11,30 @@ import com.lyh.rpc.EchoServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import io.grpc.util.RoundRobinLoadBalancerFactory;
 
 public class HelloWorldClient {
 
-  private static final Logger logger = Logger.getLogger("Client");
-
+  private static final Logger logger = Logger.getLogger("client");
   private final ManagedChannel channel;
   private final EchoServiceGrpc.EchoServiceBlockingStub blockingStub;
 
   /**
-   * Construct client connecting to HelloWorld server using Zookeeper name resolver and Round Robin
+   * Construct client connecting to EchoServer server using Zookeeper name resolver and Round Robin
    * load balancer.
    */
   public HelloWorldClient(String zkAddr) {
+    // this(ManagedChannelBuilder.forTarget(zkAddr)//
+    // .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())//
+    // .nameResolverFactory(new ZkNameResolverProvider())//
+    // .usePlaintext(true));
+
+    // LoadBalancerRegistry.getDefaultRegistry().register(new Provider());
     this(ManagedChannelBuilder.forTarget(zkAddr)//
-        .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())//
+        .defaultLoadBalancingPolicy("round_robin")//
         .nameResolverFactory(new ZkNameResolverProvider())//
-        .usePlaintext(true));
+        .usePlaintext());
   }
 
-  // LoadBalancerRegistry.getDefaultRegistry().register(RoundRobinLoadBalancerFactory.getInstance());
-
-  public ManagedChannelBuilder definedDefault(String zkAddr) {
-    return ManagedChannelBuilder.forTarget(zkAddr)//
-        .defaultLoadBalancingPolicy("pick_first")//
-        .nameResolverFactory(new ZkNameResolverProvider())//
-        .usePlaintext();
-  }
 
   /** Construct client for accessing the server using the existing channel. */
   HelloWorldClient(ManagedChannelBuilder<?> channelBuilder) {
