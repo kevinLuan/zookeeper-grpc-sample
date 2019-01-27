@@ -1,9 +1,10 @@
-package com.lyh.grpc.server.zk;
+package com.lyh.demo.core;
 
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 import org.apache.zookeeper.CreateMode;
@@ -14,40 +15,49 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
-class ZookeeperConnection {
+public class ZookeeperConnection {
   private static final Logger logger = Logger.getLogger("ZooKeeper");
   private ZooKeeper zoo;
+  private final String zkUri;
 
-  public void ZookeeperConnection() {}
+  public ZookeeperConnection(String zkUri) {
+    Objects.requireNonNull(zkUri, "`zkUri`参数不能为空");
+    this.zkUri = zkUri;
+    this.initZKConnec();
+  }
 
   /**
-   * Connects to a zookeeper ensemble in zkUriStr.<br/>
-   * 
+   * 初始化zookeeper链接
+   */
+  private void initZKConnec() {
+    String zkhostport;
+    try {
+      URI uri = new URI(zkUri);
+      zkhostport = uri.getHost().toString() + ":" + Integer.toString(uri.getPort());
+      final CountDownLatch connectedSignal = new CountDownLatch(1);
+      try {
+        zoo = new ZooKeeper(zkhostport, 5000, new Watcher() {
+          public void process(WatchedEvent we) {
+            if (we.getState() == KeeperState.SyncConnected) {
+              connectedSignal.countDown();
+            }
+          }
+        });
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      /* Wait for zookeeper connection */
+      connectedSignal.await();
+    } catch (Exception e) {
+      logger.severe("Could not parse zk URI " + zkUri);
+    }
+  }
+
+  /**
    * @param serverIp gRPC Provider server IP
    * @param portStr gRPC Provider server PORT
    */
-  public boolean connect(String zkUriStr, String serverIp, int port)
-      throws IOException, InterruptedException {
-    final CountDownLatch connectedSignal = new CountDownLatch(1);
-    String zkhostport;
-    try {
-      URI zkUri = new URI(zkUriStr);
-      zkhostport = zkUri.getHost().toString() + ":" + Integer.toString(zkUri.getPort());
-    } catch (Exception e) {
-      logger.severe("Could not parse zk URI " + zkUriStr);
-      return false;
-    }
-
-    zoo = new ZooKeeper(zkhostport, 5000, new Watcher() {
-      public void process(WatchedEvent we) {
-        if (we.getState() == KeeperState.SyncConnected) {
-          connectedSignal.countDown();
-        }
-      }
-    });
-    /* Wait for zookeeper connection */
-    connectedSignal.await();
-
+  public boolean connect(String serverIp, int port) throws IOException, InterruptedException {
     String path = "/grpc_hello_world_service";
     Stat stat;
     String currTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());

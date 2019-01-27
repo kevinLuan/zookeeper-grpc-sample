@@ -2,7 +2,7 @@ package com.lyh.grpc.server;
 
 import java.io.IOException;
 import java.util.logging.Logger;
-import com.lyh.grpc.server.api.EchoServiceImpl;
+import com.lyh.demo.service.EchoServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.ServerInterceptors;
