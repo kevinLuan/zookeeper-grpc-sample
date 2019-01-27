@@ -14,8 +14,8 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
 /**
- * A simple client that like {@link com.lyh.rpc.EchoServiceGrpc}. This client can
- * help you create custom headers.
+ * A simple client that like {@link com.lyh.rpc.EchoServiceGrpc}. This client can help you create
+ * custom headers.
  */
 public class CustomHeaderClient {
   private static final Logger logger = Logger.getLogger(CustomHeaderClient.class.getName());

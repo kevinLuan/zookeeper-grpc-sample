@@ -1,4 +1,4 @@
-package com.lyh.grpc.resolve;
+package com.lyh.demo.resolve;
 
 import java.net.URI;
 import javax.annotation.Nullable;

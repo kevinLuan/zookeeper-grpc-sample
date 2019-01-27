@@ -1,4 +1,4 @@
-package com.lyh.grpc.resolve;
+package com.lyh.demo.resolve;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -41,7 +41,7 @@ public class ZkNameResolver extends NameResolver implements Watcher {
     } else {
       try {
         List<String> servers = zoo.getChildren(PATH, false);
-        AddServersToListener(servers);
+        addServersToListener(servers);
         zoo.getChildren(PATH, this);
       } catch (Exception ex) {
         logger.info(ex.getMessage());
@@ -49,7 +49,7 @@ public class ZkNameResolver extends NameResolver implements Watcher {
     }
   }
 
-  private void AddServersToListener(List<String> servers) {
+  private void addServersToListener(List<String> servers) {
     List<EquivalentAddressGroup> addrs = new ArrayList<EquivalentAddressGroup>();
     logger.info("Updating server list");
     for (String child : servers) {
@@ -120,9 +120,8 @@ public class ZkNameResolver extends NameResolver implements Watcher {
     }
 
     try {
-      final CountDownLatch connectedSignal1 = new CountDownLatch(1);
       List<String> servers = zoo.getChildren(PATH, this);
-      AddServersToListener(servers);
+      addServersToListener(servers);
     } catch (Exception e) {
       logger.info(e.getMessage());
     }
